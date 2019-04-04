@@ -27,8 +27,10 @@ type NLPResponse struct {
 	Intent     string            `json:"intent"`
 	Confidence float32           `json:"confidence"`
 	Entities   map[string]string `json:"entities"`
+	Response   string            `json:"response"`
 }
 
+// DF Dialogflow interface variable
 var DF DialogflowProcessor
 
 func (dp *DialogflowProcessor) init(a ...string) (err error) {
@@ -65,6 +67,7 @@ func (dp *DialogflowProcessor) processNLP(rawMessage string, username string) (r
 			TimeZone: dp.timeZone,
 		},
 	}
+
 	response, err := dp.sessionClient.DetectIntent(dp.ctx, &request)
 	if err != nil {
 		log.Fatalf("Error in communication with Dialogflow %s", err.Error())
@@ -74,6 +77,7 @@ func (dp *DialogflowProcessor) processNLP(rawMessage string, username string) (r
 	if queryResult.Intent != nil {
 		r.Intent = queryResult.Intent.DisplayName
 		r.Confidence = float32(queryResult.IntentDetectionConfidence)
+		r.Response = queryResult.FulfillmentText
 	}
 	r.Entities = make(map[string]string)
 	params := queryResult.Parameters.GetFields()

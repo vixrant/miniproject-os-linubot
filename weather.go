@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
+// Weather () - displays the weather based on the queryResult
 func Weather(res NLPResponse) {
-	fmt.Println("User asked for weather")
-	fmt.Println(res)
+	fmt.Println(res.Response)
 }

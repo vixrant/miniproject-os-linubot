@@ -26,5 +26,7 @@ func analyseResponse(res NLPResponse) {
 	switch intent := res.Intent; intent {
 	case "WeatherIntent":
 		Weather(res)
+	case "Default Welcome Intent":
+		fmt.Println("Hi")
 	}
 }
