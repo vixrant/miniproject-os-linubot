@@ -25,8 +25,17 @@ func main() {
 func analyseResponse(res NLPResponse) {
 	switch intent := res.Intent; intent {
 	case "WeatherIntent":
-		Weather(res)
+		err := Weather(res)
+		if err != nil {
+			fmt.Println(err)
+		}
 	case "WelcomeIntent":
-		fmt.Println("Hi")
+		fmt.Println("Hi! Try weather or filesearch.")
+
+	case "FileSearchIntent":
+		ImageSearchByDate(res)
+
+	case "CommandIntent":
+		CommandSearch(res)
 	}
 }
