@@ -24,10 +24,11 @@ type DialogflowProcessor struct {
 
 // NLPResponse is the struct for the response
 type NLPResponse struct {
-	Intent     string            `json:"intent"`
-	Confidence float32           `json:"confidence"`
-	Entities   map[string]string `json:"entities"`
-	Response   string            `json:"response"`
+	Intent     string                 `json:"intent"`
+	Confidence float32                `json:"confidence"`
+	Entities   map[string]interface{} `json:"entities"`
+	Response   string                 `json:"response"`
+	QueryText  string                 `json:"queryText"`
 }
 
 // DF Dialogflow interface variable
@@ -78,8 +79,9 @@ func (dp *DialogflowProcessor) processNLP(rawMessage string, username string) (r
 		r.Intent = queryResult.Intent.DisplayName
 		r.Confidence = float32(queryResult.IntentDetectionConfidence)
 		r.Response = queryResult.FulfillmentText
+		r.Response = queryResult.QueryText
 	}
-	r.Entities = make(map[string]string)
+	r.Entities = make(map[string]interface{})
 	params := queryResult.Parameters.GetFields()
 	if len(params) > 0 {
 		for paramName, p := range params {
@@ -107,12 +109,12 @@ func extractDialogflowEntities(p *structpb.Value) (extractedEntity string) {
 		for key, value := range fields {
 			if key == "amount" {
 				extractedEntity = fmt.Sprintf("%s%s", extractedEntity, strconv.FormatFloat(value.GetNumberValue(), 'f', 6, 64))
-			}
-			if key == "unit" {
+			} else if key == "unit" {
 				extractedEntity = fmt.Sprintf("%s%s", extractedEntity, value.GetStringValue())
-			}
-			if key == "date_time" {
+			} else if key == "date_time" {
 				extractedEntity = fmt.Sprintf("%s%s", extractedEntity, value.GetStringValue())
+			} else if key == "startDate" || key == "endDate" {
+				extractedEntity = fmt.Sprintf("%s %s", extractedEntity, value.GetStringValue())
 			}
 			// @TODO: Other entity types can be added here
 		}

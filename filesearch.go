@@ -1,11 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -36,21 +36,18 @@ func analyse(path string, info os.FileInfo, startDate time.Time, endDate time.Ti
 	return nil
 }
 
-type datePeriod struct {
-	startDate time.Time `json:"startDate"`
-	endDate   time.Time `json:"endDate"`
-}
-
 // ImageSearchByDate - search files based on date modified.
 func ImageSearchByDate(res NLPResponse) error {
-	var dp datePeriod
-	err := json.Unmarshal([]byte(res.Entities["date-period"]), &dp)
+	dp := res.Entities["date-period"].(string)
+	dates := strings.Split(dp, " ")[1:3]
+	startDate, err := time.Parse(time.RFC3339, dates[0])
 	if err != nil {
-		fmt.Println(res.Entities["date-period"])
 		return err
 	}
-
-	fmt.Println(dp)
+	endDate, err := time.Parse(time.RFC3339, dates[1])
+	if err != nil {
+		return err
+	}
 
 	home, err := os.UserHomeDir()
 
@@ -60,7 +57,7 @@ func ImageSearchByDate(res NLPResponse) error {
 				return err
 			}
 
-			analyse(path, info, dp.startDate, dp.endDate)
+			analyse(path, info, startDate, endDate)
 
 			return nil
 		})

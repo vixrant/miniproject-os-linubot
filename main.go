@@ -30,12 +30,21 @@ func analyseResponse(res NLPResponse) {
 			fmt.Println(err)
 		}
 	case "WelcomeIntent":
-		fmt.Println("Hi! Try weather or filesearch.")
+		fmt.Println("Hi! Try weather, filesearch, commandsearch. ")
 
 	case "FileSearchIntent":
 		ImageSearchByDate(res)
 
 	case "CommandIntent":
 		CommandSearch(res)
+
+	case "GrepIntent":
+		GrepSearch(res)
+
+	case "TldrIntent":
+		TldrSearch(res)
+
+	default:
+		fmt.Println("SORRY! Couldn't recognise this action!")
 	}
 }

@@ -17,7 +17,7 @@ func Weather(res NLPResponse) error {
 	// var target time.Time
 	if res.Entities["date"] != "" {
 		var err error
-		_, err = time.Parse(time.RFC3339, res.Entities["date"])
+		_, err = time.Parse(time.RFC3339, res.Entities["date"].(string))
 		if err != nil {
 			return err
 		}

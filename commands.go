@@ -281,7 +281,7 @@ var commands = []string{
 }
 
 func CommandSearch(res NLPResponse) {
-	query := res.Entities["query"]
+	query := res.Entities["query"].(string)
 	matches := fuzzy.Find(query, commands)
 
 	for _, m := range matches {
